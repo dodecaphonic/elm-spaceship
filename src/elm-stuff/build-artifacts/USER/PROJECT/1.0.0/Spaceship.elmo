@@ -1,0 +1,42 @@
+Elm.Spaceship = Elm.Spaceship || {};
+Elm.Spaceship.make = function (_elm) {
+   "use strict";
+   _elm.Spaceship = _elm.Spaceship || {};
+   if (_elm.Spaceship.values)
+   return _elm.Spaceship.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Spaceship",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var gameStage = function (_v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return $Graphics$Element.layers(_L.fromArray([A3($Graphics$Collage.collage,
+              _v0._0,
+              _v0._1,
+              _L.fromArray([$Graphics$Collage.filled($Color.lightBlue)(A2($Graphics$Collage.rect,
+              $Basics.toFloat(_v0._0),
+              $Basics.toFloat(_v0._1)))]))]));}
+         _U.badCase($moduleName,
+         "between lines 11 and 16");
+      }();
+   };
+   var main = A2($Signal.map,
+   gameStage,
+   $Window.dimensions);
+   _elm.Spaceship.values = {_op: _op
+                           ,gameStage: gameStage
+                           ,main: main};
+   return _elm.Spaceship.values;
+};
