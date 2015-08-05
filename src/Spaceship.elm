@@ -21,6 +21,18 @@ spaceshipDimensions : (Int, Int)
 spaceshipDimensions = (50, 52)
 
 
+laserDimensions : (Int, Int)
+laserDimensions = (7, 33)
+
+
+laserImage : Element
+laserImage =
+  let
+    (w, h) = laserDimensions
+  in
+    image w h "sprites/laser.png"
+
+
 spaceshipImage : Element
 spaceshipImage =
   let
@@ -52,14 +64,23 @@ gameStage (w', h') spaceship =
     (w, h) =
       (toFloat w', toFloat h')
 
-    (_, sh) =
+    (sw, sh) =
       spaceshipDimensions
+
+    (_, lh) =
+      laserDimensions
 
     spaceshipY =
       (toFloat sh) - h / 2
 
-    position =
+    laserY =
+      (toFloat lh) - h / 2 + (toFloat sh) + 10
+
+    spaceshipPosition =
       (spaceship.x, spaceshipY)
+
+    laserPosition =
+      (spaceship.x, laserY)
   in
     layers [
       collage w' h'
@@ -67,7 +88,10 @@ gameStage (w', h') spaceship =
             |> filled black
         , spaceshipImage
             |> toForm
-            |> move position
+            |> move spaceshipPosition
+        , laserImage
+            |> toForm
+            |> move laserPosition
         ]
     ]
 
