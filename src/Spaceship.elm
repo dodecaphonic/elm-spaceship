@@ -34,6 +34,7 @@ type alias Model = { spaceshipX : Float
                    , shots : List Shot
                    , bullets : List Bullet
                    , bulletSeed : Seed
+                   , hit : Bool
                    }
 
 
@@ -56,9 +57,24 @@ laserImage =
     image w h "sprites/laser.png"
 
 
+bulletDimensions : (Int, Int)
+bulletDimensions = (15, 35)
+
+
 bulletImage : Element
 bulletImage =
-  image 15 35 "sprites/bullet.png"
+  let
+    (w, h) = bulletDimensions
+  in
+    image w h "sprites/bullet.png"
+
+
+explosionImage : Element
+explosionImage =
+  let
+    (w, h) = spaceshipDimensions
+  in
+    image w h "sprites/explosion.png"
 
 
 laserVelocity : Float
@@ -77,8 +93,9 @@ game : Model
 game = { spaceshipX = 0
        , spaceshipY = 0
        , shots = []
-       , bullets = []
+       , bullets = [{ x = 0, y = 0 }]
        , bulletSeed = initialSeed 1337
+       , hit = False
        }
 
 
@@ -90,6 +107,7 @@ update (dt, arrows, shooting, (ww, wh)) game =
     |> updateShots wh
     |> maybeAddBullet ww wh
     |> updateBullets dt wh
+    |> maybeCollide
 
 
 glide : Float -> Keys -> Height -> Model -> Model
@@ -177,6 +195,33 @@ renderBullet w h bullet =
     |> move (bullet.x, bullet.y)
 
 
+maybeCollide : Model -> Model
+maybeCollide game =
+  let
+    (bw, bh) =
+      bulletDimensions
+
+    (sw, sh) =
+      spaceshipDimensions
+
+    (bw', bh') =
+      (toFloat bw, toFloat bh)
+
+    (sw', sh') =
+      (toFloat sw, toFloat sh)
+
+    collides b =
+      not <|
+        b.x + bw' < game.spaceshipX ||
+        b.x > game.spaceshipX + sw' ||
+        b.y + bh' < game.spaceshipY ||
+        b.y > game.spaceshipY + sh'
+
+    isHit = List.any collides game.bullets
+  in
+    { game | hit <- isHit }
+
+
 gameStage : (Int, Int) -> Model -> Element
 gameStage (w', h') game =
   let
@@ -194,6 +239,11 @@ gameStage (w', h') game =
 
     laserPosition =
       (game.spaceshipX, laserY)
+
+    spaceship = if game.hit then
+                  explosionImage
+                else
+                  spaceshipImage
   in
     layers [
       collage w' h'
@@ -202,7 +252,7 @@ gameStage (w', h') game =
         , laserImage
           |> toForm
             |> move laserPosition
-        , spaceshipImage
+        , spaceship
             |> toForm
             |> move spaceshipPosition
         ] ++ (List.map (renderShot w h) game.shots)
