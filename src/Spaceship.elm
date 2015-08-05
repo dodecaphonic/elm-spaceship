@@ -165,7 +165,7 @@ updateBullets dt wh game =
   let
     updateBullet b = { b | y <- b.y - ((dt / 8) * gravity) }
     updated = List.map updateBullet game.bullets
-    inScreen = updated -- List.filter (\b -> b.y > (wh / 2)) updated
+    inScreen = List.filter (\b -> b.y > -(wh / 2)) updated
   in
     { game | bullets <- inScreen }
 
